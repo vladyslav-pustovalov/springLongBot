@@ -9,8 +9,11 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 @Component
 public class SpringLongBot extends TelegramLongPollingBot {
 
-    private final String botName = System.getenv("botName");
-    private final String botToken = System.getenv("botToken");
+//    private final String botName = System.getenv("botName");
+//    private final String botToken = System.getenv("botToken");
+
+    private final String botName = "MyAmazing300323Bot";
+    private final String botToken = "6081564544:AAF7UHRn6mgmG8JZa3OIkIC3tzsGQoLFYTM";
 
     SpringLongBot () {
     }
