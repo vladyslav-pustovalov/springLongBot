@@ -1,7 +1,14 @@
-package com.springLongBot.springLongBot;
+package com.springLongBot.springLongBot.config;
 
+/**
+ * @author Vladyslav Pustovalov
+ */
+
+import com.springLongBot.springLongBot.service.SpringLongBot;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -12,32 +19,37 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class BotInitializer {
 
-    private final String botToken = System.getenv("botToken");
+    final String botToken = System.getenv("botToken");
 
-    private final DefaultBotOptions options = new DefaultBotOptions();
+    final DefaultBotOptions options = new DefaultBotOptions();
 
     @Bean
-    private String getToken() {
+    String getToken() {
         return botToken;
     }
 
     @Bean
-    private DefaultBotOptions getOptions() {
+    DefaultBotOptions getOptions() {
         return options;
     }
 
-    SpringLongBot bot = new SpringLongBot(getOptions(), getToken());
+    final SpringLongBot bot = new SpringLongBot(getOptions(), getToken());
 
+    /**
+     * Method which registers the created bot
+     */
     @EventListener({ContextRefreshedEvent.class})
     public void init() {
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
             botsApi.registerBot(bot);
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+            log.error("Error occurred: "+e.getMessage());
         }
     }
 }
