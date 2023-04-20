@@ -1,4 +1,4 @@
-package com.springLongBot.springLongBot;
+package com.sprint_long_bot;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

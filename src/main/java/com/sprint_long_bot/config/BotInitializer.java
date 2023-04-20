@@ -1,10 +1,10 @@
-package com.springLongBot.springLongBot.config;
+package com.sprint_long_bot.config;
 
 /**
  * @author Vladyslav Pustovalov
  */
 
-import com.springLongBot.springLongBot.service.SpringLongBot;
+import com.sprint_long_bot.service.SpringLongBot;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
