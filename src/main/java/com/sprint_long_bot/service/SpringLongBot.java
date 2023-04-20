@@ -1,4 +1,4 @@
-package com.springLongBot.springLongBot.service;
+package com.sprint_long_bot.service;
 /**
  * @author Vladyslav Pustovalov
  */
@@ -25,8 +25,6 @@ public class SpringLongBot extends TelegramLongPollingBot {
 
     final String botName = System.getenv("botName");
 
-    final String errorOccurred = "Error occurred: ";
-
     public SpringLongBot(DefaultBotOptions options, String botToken) {
         super(options, botToken);
     }
@@ -41,53 +39,66 @@ public class SpringLongBot extends TelegramLongPollingBot {
      */
     @Override
     public void onUpdateReceived(Update update) {
+        String userName = update.getMessage().getChat().getUserName();
+        String messageText = update.getMessage().getText();
+        long chatId = update.getMessage().getChatId();
+        String errorOccurred = "Error occurred: ";
 
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            String messageText = update.getMessage().getText();
-            long chatId = update.getMessage().getChatId();
+        if (!update.hasMessage() || !update.getMessage().hasText()) {
+            log.warn("Unexpected update from user " + userName);
+            try {
+                sendWarnMessage(chatId);
+                log.info("Warn message was sent to user " + userName);
+            } catch (TelegramApiException e) {
+                log.error(errorOccurred + e);
+            }
+        } else {
 
             switch (messageText) {
                 case "/start" -> {
-
                     try {
                         sendStartMessage(chatId);
+                        log.info("Welcome message was sent to user " + userName);
                     } catch (TelegramApiException e) {
-                        log.error(errorOccurred+e);
+                        log.error(errorOccurred + e);
                     }
                 }
 
                 case "My subscription list" -> {
                     try {
                         sendSubscriptionList(chatId);
+                        log.info("Subscription list was sent to user " + userName);
                     } catch (TelegramApiException e) {
-                        log.error(errorOccurred+e);
+                        log.error(errorOccurred + e);
                     }
                 }
 
                 case "Available tender sites for subscription" -> {
                     try {
                         sendAvailableSitesList(chatId);
+                        log.info("Available sites list was sent to user " + userName);
                     } catch (TelegramApiException e) {
-                        log.error(errorOccurred+e);
+                        log.error(errorOccurred + e);
                     }
                 }
 
                 case "Help instructions" -> {
                     try {
                         sendHelpMessage(chatId);
+                        log.info("Help instructions was sent to user " + userName);
                     } catch (TelegramApiException e) {
-                        log.error(errorOccurred+e);
+                        log.error(errorOccurred + e);
                     }
                 }
 
-                default ->{
+                default -> {
                     try {
                         sendDefaultMessage(chatId);
+                        log.info("Default message was sent to user " + userName);
                     } catch (TelegramApiException e) {
-                        log.error(errorOccurred+e);
+                        log.error(errorOccurred + e);
                     }
                 }
-
             }
         }
     }
@@ -132,7 +143,7 @@ public class SpringLongBot extends TelegramLongPollingBot {
     /**
      * Method which sends information and instructions for a user
      */
-    void sendHelpMessage (long chatId) throws TelegramApiException {
+    void sendHelpMessage(long chatId) throws TelegramApiException {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
         message.setText("Help text");
@@ -148,6 +159,18 @@ public class SpringLongBot extends TelegramLongPollingBot {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
         message.setText("Sorry, this command is not supported!\nPlease use the Keyboard buttons!");
+        message.setReplyMarkup(setKeyboard());
+
+        execute(message);
+    }
+
+    /**
+     * Method which sends default answer on not supported update date format
+     */
+    void sendWarnMessage(long chatId) throws TelegramApiException {
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        message.setText("You are trying to make bad things!\nPlease use the Keyboard buttons!");
         message.setReplyMarkup(setKeyboard());
 
         execute(message);
@@ -178,5 +201,4 @@ public class SpringLongBot extends TelegramLongPollingBot {
 
         return keyboardMarkup;
     }
-
 }
