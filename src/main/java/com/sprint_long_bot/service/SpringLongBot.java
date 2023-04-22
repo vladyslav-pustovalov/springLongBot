@@ -23,7 +23,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SpringLongBot extends TelegramLongPollingBot {
 
-    final String botName = System.getenv("botName");
+    final MessageSender messageSender = new MessageSender();
 
     public SpringLongBot(DefaultBotOptions options, String botToken) {
         super(options, botToken);
@@ -31,7 +31,7 @@ public class SpringLongBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return botName;
+        return System.getenv("botName");
     }
 
     /**
@@ -47,7 +47,7 @@ public class SpringLongBot extends TelegramLongPollingBot {
         if (!update.hasMessage() || !update.getMessage().hasText()) {
             log.warn("Unexpected update from user " + userName);
             try {
-                sendWarnMessage(chatId);
+                execute(messageSender.warnMessage(chatId));
                 log.info("Warn message was sent to user " + userName);
             } catch (TelegramApiException e) {
                 log.error(errorOccurred + e);
@@ -57,7 +57,7 @@ public class SpringLongBot extends TelegramLongPollingBot {
             switch (messageText) {
                 case "/start" -> {
                     try {
-                        sendStartMessage(chatId);
+                        execute(messageSender.startMessage(chatId));
                         log.info("Welcome message was sent to user " + userName);
                     } catch (TelegramApiException e) {
                         log.error(errorOccurred + e);
@@ -66,7 +66,7 @@ public class SpringLongBot extends TelegramLongPollingBot {
 
                 case "My subscription list" -> {
                     try {
-                        sendSubscriptionList(chatId);
+                        execute(messageSender.userSubscriptionsList(chatId));
                         log.info("Subscription list was sent to user " + userName);
                     } catch (TelegramApiException e) {
                         log.error(errorOccurred + e);
@@ -75,7 +75,7 @@ public class SpringLongBot extends TelegramLongPollingBot {
 
                 case "Available tender sites for subscription" -> {
                     try {
-                        sendAvailableSitesList(chatId);
+                        execute(messageSender.availableSitesList(chatId));
                         log.info("Available sites list was sent to user " + userName);
                     } catch (TelegramApiException e) {
                         log.error(errorOccurred + e);
@@ -84,7 +84,7 @@ public class SpringLongBot extends TelegramLongPollingBot {
 
                 case "Help instructions" -> {
                     try {
-                        sendHelpMessage(chatId);
+                        execute(messageSender.helpMessage(chatId));
                         log.info("Help instructions was sent to user " + userName);
                     } catch (TelegramApiException e) {
                         log.error(errorOccurred + e);
@@ -93,7 +93,7 @@ public class SpringLongBot extends TelegramLongPollingBot {
 
                 default -> {
                     try {
-                        sendDefaultMessage(chatId);
+                        execute(messageSender.defaultMessage(chatId));
                         log.info("Default message was sent to user " + userName);
                     } catch (TelegramApiException e) {
                         log.error(errorOccurred + e);
@@ -101,104 +101,5 @@ public class SpringLongBot extends TelegramLongPollingBot {
                 }
             }
         }
-    }
-
-    /**
-     * Method which sends the welcome text to a user
-     */
-    void sendStartMessage(long chatId) throws TelegramApiException {
-        SendMessage message = new SendMessage();
-        message.setChatId(String.valueOf(chatId));
-        message.setText("Welcome text");
-        message.setReplyMarkup(setKeyboard());
-
-        execute(message);
-    }
-
-    /**
-     * Method which sends to a user the list with they subscription
-     */
-    void sendSubscriptionList(long chatId) throws TelegramApiException {
-        SendMessage message = new SendMessage();
-        message.setChatId(String.valueOf(chatId));
-        message.setText("User's subscription list");
-        message.setReplyMarkup(setKeyboard());
-
-        execute(message);
-
-    }
-
-    /**
-     * Method which sends the list with tender sites available for the subscription
-     */
-    void sendAvailableSitesList(long chatId) throws TelegramApiException {
-        SendMessage message = new SendMessage();
-        message.setChatId(String.valueOf(chatId));
-        message.setText("Available sites for subscription");
-        message.setReplyMarkup(setKeyboard());
-
-        execute(message);
-    }
-
-    /**
-     * Method which sends information and instructions for a user
-     */
-    void sendHelpMessage(long chatId) throws TelegramApiException {
-        SendMessage message = new SendMessage();
-        message.setChatId(String.valueOf(chatId));
-        message.setText("Help text");
-        message.setReplyMarkup(setKeyboard());
-
-        execute(message);
-    }
-
-    /**
-     * Method which sends default answer on not supported commands
-     */
-    void sendDefaultMessage(long chatId) throws TelegramApiException {
-        SendMessage message = new SendMessage();
-        message.setChatId(String.valueOf(chatId));
-        message.setText("Sorry, this command is not supported!\nPlease use the Keyboard buttons!");
-        message.setReplyMarkup(setKeyboard());
-
-        execute(message);
-    }
-
-    /**
-     * Method which sends default answer on not supported update date format
-     */
-    void sendWarnMessage(long chatId) throws TelegramApiException {
-        SendMessage message = new SendMessage();
-        message.setChatId(String.valueOf(chatId));
-        message.setText("You are trying to make bad things!\nPlease use the Keyboard buttons!");
-        message.setReplyMarkup(setKeyboard());
-
-        execute(message);
-    }
-
-    /**
-     * Method which initializes default keyboard for the bot
-     */
-    ReplyKeyboardMarkup setKeyboard() {
-        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
-
-        List<KeyboardRow> keyboardRows = new ArrayList<>();
-
-        KeyboardRow row1 = new KeyboardRow();
-        row1.add("My subscription list");
-
-        KeyboardRow row2 = new KeyboardRow();
-        row2.add("Available tender sites for subscription");
-
-        KeyboardRow row3 = new KeyboardRow();
-        row3.add("Help instructions");
-
-        keyboardRows.add(row1);
-        keyboardRows.add(row2);
-        keyboardRows.add(row3);
-
-        keyboardMarkup.setKeyboard(keyboardRows);
-
-        return keyboardMarkup;
     }
 }

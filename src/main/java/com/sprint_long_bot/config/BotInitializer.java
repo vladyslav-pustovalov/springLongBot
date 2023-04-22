@@ -24,18 +24,14 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BotInitializer {
 
-    final String botToken = System.getenv("botToken");
-
-    final DefaultBotOptions options = new DefaultBotOptions();
-
     @Bean
     String getToken() {
-        return botToken;
+        return System.getenv("botToken");
     }
 
     @Bean
     DefaultBotOptions getOptions() {
-        return options;
+        return new DefaultBotOptions();
     }
 
     final SpringLongBot bot = new SpringLongBot(getOptions(), getToken());
