@@ -1,5 +1,10 @@
 package com.sprint_long_bot.service;
 
+/**
+ * @author Vladyslav Pustovalov
+ * class which consist of answers that are sent  to users
+ */
+
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;

@@ -1,27 +1,25 @@
 package com.sprint_long_bot.service;
 /**
  * @author Vladyslav Pustovalov
+ * class TelegramBot which gets messages from useers and could answer to them
  */
 
+import com.sprint_long_bot.config.BotConfig;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SpringLongBot extends TelegramLongPollingBot {
+
+    final BotConfig config = new BotConfig();
 
     final MessageSender messageSender = new MessageSender();
 
@@ -31,11 +29,11 @@ public class SpringLongBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return System.getenv("botName");
+        return config.getBotName();
     }
 
     /**
-     * Method which gets updates from a user and sends to they an answer
+     * Method which gets updates from users and sends to them an answer
      */
     @Override
     public void onUpdateReceived(Update update) {

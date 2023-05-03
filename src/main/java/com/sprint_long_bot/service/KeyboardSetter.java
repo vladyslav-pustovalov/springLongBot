@@ -1,5 +1,10 @@
 package com.sprint_long_bot.service;
 
+/**
+ * @author Vladyslav Pustovalov
+ * class which consist of Bot Keyboards that are shown to users
+ */
+
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
