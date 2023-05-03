@@ -10,6 +10,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Slf4j
 public class BotController {
+    private String update;
+
+    public String getUpdate() {
+        return update;
+    }
+
+    public void setUpdate(String update) {
+        this.update = update;
+    }
 
     public BotController() {
     }
@@ -22,6 +31,7 @@ public class BotController {
 
     @PostMapping("/hello")
     public String takeUpdateFromRest(@RequestBody String update) {
+        setUpdate(update);
         log.info("POST works, '"+update+"' is took via Postman");
         return "update is took"+update;
     }
